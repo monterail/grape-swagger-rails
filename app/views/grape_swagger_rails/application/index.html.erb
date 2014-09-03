@@ -37,13 +37,22 @@
         docExpansion: "none"
       });
 
-      $('#input_apiKey').change(function() {
-        var key = $('#input_apiKey')[0].value;
-        log("key: " + key);
-        if(key && key.trim() != "") {
-          log("added key " + key);
-          window.authorizations.add("key", new ApiKeyAuthorization(options.api_key_name, key, options.api_key_type));
-        }
+      if (options.hide_app_url) {
+        $('#input_baseUrl').parent().hide()
+        $('#explore').parent().hide()
+      }
+
+      $(options.api_keys).each(function(i, option){
+        id = 'input_apiKey' + i
+        $('#api_selector .input:last').before('<div class="input"><input placeholder="' + option.name + '" id="' + id + '" name="' + option.name + '" type="text"></div>')
+        $('#' + id).bind('change', function() {
+          var key = $(this).val();
+          log("key: " + key);
+          if(key && key.trim() != "") {
+            log("added key " + key);
+            window.authorizations.add("key", new ApiKeyAuthorization(option.name, key, option.type));
+          }
+        });
       });
       window.swaggerUi.load();
     });
@@ -57,7 +66,6 @@
 
       <form id='api_selector'>
         <div class='input'><input placeholder="http://example.com/api" id="input_baseUrl" name="baseUrl" type="text"/></div>
-        <div class='input'><input placeholder="api_key" id="input_apiKey" name="apiKey" type="text"/></div>
         <div class='input'><a id="explore" href="#">Explore</a></div>
       </form>
     </div>

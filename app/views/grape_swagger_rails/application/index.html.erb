@@ -31,28 +31,25 @@
       docExpansion: "none"
     });
 
-    $('#input_apiKey').change(function() {
-      var key = $('#input_apiKey')[0].value;
+    if (options.hide_app_url) {
+      $('#input_baseUrl').parent().hide()
+      $('#explore').parent().hide()
+    }
 
-      if (options.hide_app_url) {
-        $('#input_baseUrl').parent().hide()
-        $('#explore').parent().hide()
-      }
-
-      $(options.api_keys).each(function(i, option){
-        id = 'input_apiKey' + i
-        $('#api_selector .input:last').before('<div class="input"><input placeholder="' + option.name + '" id="' + id + '" name="' + option.name + '" type="text"></div>')
-        $('#' + id).bind('change', function() {
-          var key = $(this).val();
-          log("key: " + key);
-          if(key && key.trim() != "") {
-            log("added key " + key);
-            window.authorizations.add("key", new ApiKeyAuthorization(option.name, key, option.type));
-          }
-        });
+    $(options.api_keys).each(function(i, option){
+      id = 'input_apiKey' + i
+      $('#api_selector .input:last').before('<div class="input"><input placeholder="' + option.name + '" id="' + id + '" name="' + option.name + '" type="text"></div>')
+      $('#' + id).bind('change', function() {
+        var key = $(this).val();
+        log("key: " + key);
+        if(key && key.trim() != "") {
+          log("added key " + key);
+          window.authorizations.add("key", new ApiKeyAuthorization(option.name, key, option.type));
+        }
       });
-      window.swaggerUi.load();
     });
+
+    window.swaggerUi.load();
 
     <% GrapeSwaggerRails.options.headers.each_pair do |key, value| %>
       <%=raw "window.authorizations.add('key', new ApiKeyAuthorization('#{CGI.escapeHTML(key)}', '#{CGI.escapeHTML(value)}', 'header'));" %>
